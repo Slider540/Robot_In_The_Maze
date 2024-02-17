@@ -55,12 +55,12 @@ def move_robot(current_location, direction):
         distance['y'] -= 1
         move_robot_on_map(0, 1)
 
-    if direction == 'right' or direction == 'left':
-        opened_directions['up'] = True
-        opened_directions['down'] = True
-    else:
-        opened_directions['right'] = True
-        opened_directions['left'] = True
+    # if direction == 'right' or direction == 'left':
+    #     opened_directions['up'] = True
+    #     opened_directions['down'] = True
+    # else:
+    #     opened_directions['right'] = True
+    #     opened_directions['left'] = True
 
     route.append(new_location)
     return new_location
@@ -79,12 +79,16 @@ if __name__ == '__main__':
     tk = Tk()
     tk.title('Robot in the maze')
     width = (tk.winfo_screenwidth() - 600) // 2
-    height = (tk.winfo_screenheight() - 660) // 2
+    height = (tk.winfo_screenheight() - 700) // 2
     tk.geometry(f'600x660+{width}+{height}')
-    canvas_top = Canvas(tk, width=600, height=60, bg='#D1C1DE')
+    canvas_top = Canvas(tk, width=600, height=100, bg='#D1C1DE')
     canvas_bottom = Canvas(tk, width=600, height=600, bg='#C1DED9')
     canvas_top.pack()
     canvas_bottom.pack()
+    x_text = canvas_top.create_text(120, 20, text='', font=('Arial', -18))
+    y_text = canvas_top.create_text(480, 20, text='', font=('Arial', -18))
+    pd_text = canvas_top.create_text(300, 50, text='', font=('Arial', -18))
+    od_text = canvas_top.create_text(300, 80, text='', font=('Arial', -18))
 
     # map the labyrinth, the position of the robot and orders
     for i in range(len(city_map)):
@@ -110,9 +114,13 @@ if __name__ == '__main__':
 
         while robot_location != order_location:
             possible_directions = check_possible_directions(robot_location)
-            x_text = canvas_top.create_text(120, 30, text=f'distance X = {distance['x']}', font=('Arial', -18))
-            y_text = canvas_top.create_text(480, 30, text=f'distance Y = {distance['y']}', font=('Arial', -18))
-            sleep(0.01)
+            print(f'possible directions: {str(possible_directions)}')
+            print(f'opened directions: {str(opened_directions)}')
+            canvas_top.itemconfig(x_text, text=f'distance X = {distance['x']}')
+            canvas_top.itemconfig(y_text, text=f'distance Y = {distance['y']}')
+            sleep(0.005)
+            canvas_top.itemconfig(pd_text, text=f'possible directions: {str(possible_directions)}')
+            canvas_top.itemconfig(od_text, text=f'opened directions: {str(opened_directions)}')
 
             if abs(distance['x']) >= abs(distance['y']) and (
                     possible_directions['left'] or possible_directions['right']) and (
@@ -142,9 +150,12 @@ if __name__ == '__main__':
                     robot_location = move_robot(robot_location, 'left')
                 elif opened_directions['right']:
                     robot_location = move_robot(robot_location, 'right')
+            else:
+                robot_location = move_robot(robot_location, 'right')
 
-            canvas_top.delete(x_text)
-            canvas_top.delete(y_text)
-
-    canvas_top.create_text(300, 30, text='All orders completed', font=('Arial', -18))
+    canvas_top.delete(x_text)
+    canvas_top.delete(y_text)
+    canvas_top.delete(pd_text)
+    canvas_top.delete(od_text)
+    canvas_top.create_text(300, 50, text='All orders completed', font=('Arial', -18))
     tk.mainloop()
