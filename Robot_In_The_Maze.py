@@ -3,30 +3,30 @@ from tkinter import *
 from time import *
 
 
-def check_possible_directions(current_location):
-    allowed_directions = {'right': False, 'left': False, 'up': False, 'down': False}
+def check_possible_moves(current_location):
+    possible_moves = {'right': False, 'left': False, 'up': False, 'down': False}
 
     if current_location[0] + 1 < len(city_map[0]) and city_map[current_location[1]][current_location[0] + 1] == 1:
-        allowed_directions['right'] = True
+        possible_moves['right'] = True
     else:
         opened_directions['right'] = False
 
     if current_location[0] - 1 >= 0 and city_map[current_location[1]][current_location[0] - 1] == 1:
-        allowed_directions['left'] = True
+        possible_moves['left'] = True
     else:
         opened_directions['left'] = False
 
     if current_location[1] - 1 >= 0 and city_map[current_location[1] - 1][current_location[0]] == 1:
-        allowed_directions['up'] = True
+        possible_moves['up'] = True
     else:
         opened_directions['up'] = False
 
     if current_location[1] + 1 < len(city_map) and city_map[current_location[1] + 1][current_location[0]] == 1:
-        allowed_directions['down'] = True
+        possible_moves['down'] = True
     else:
         opened_directions['down'] = False
 
-    return allowed_directions
+    return possible_moves
 
 
 def move_robot(current_location, direction):
@@ -34,7 +34,7 @@ def move_robot(current_location, direction):
         for dot in range(0, 6):
             canvas_bottom.move(robot, x, y)
             tk.update()
-            sleep(0.015)
+            sleep(0.01)
 
     new_location = tuple()
 
@@ -55,12 +55,12 @@ def move_robot(current_location, direction):
         distance['y'] -= 1
         move_robot_on_map(0, 1)
 
-    # if direction == 'right' or direction == 'left':
-    #     opened_directions['up'] = True
-    #     opened_directions['down'] = True
-    # else:
-    #     opened_directions['right'] = True
-    #     opened_directions['left'] = True
+    if direction == 'right' or direction == 'left':
+        opened_directions['up'] = True
+        opened_directions['down'] = True
+    else:
+        opened_directions['right'] = True
+        opened_directions['left'] = True
 
     route.append(new_location)
     return new_location
@@ -113,45 +113,62 @@ if __name__ == '__main__':
         distance['y'] = order_location[1] - robot_location[1]
 
         while robot_location != order_location:
-            possible_directions = check_possible_directions(robot_location)
-            print(f'possible directions: {str(possible_directions)}')
+            possible_moves = check_possible_moves(robot_location)
+            print(f'possible moves: {str(possible_moves)}')
             print(f'opened directions: {str(opened_directions)}')
             canvas_top.itemconfig(x_text, text=f'distance X = {distance['x']}')
             canvas_top.itemconfig(y_text, text=f'distance Y = {distance['y']}')
-            sleep(0.005)
-            canvas_top.itemconfig(pd_text, text=f'possible directions: {str(possible_directions)}')
+            # sleep(0.005)
+            canvas_top.itemconfig(pd_text, text=f'possible moves: {str(possible_moves)}')
             canvas_top.itemconfig(od_text, text=f'opened directions: {str(opened_directions)}')
 
-            if abs(distance['x']) >= abs(distance['y']) and (
-                    possible_directions['left'] or possible_directions['right']) and (
-                    opened_directions['left'] or opened_directions['right']):
-                if distance['x'] < 0 and opened_directions['left']:
-                    robot_location = move_robot(robot_location, 'left')
-                elif distance['x'] > 0 and opened_directions['right']:
-                    robot_location = move_robot(robot_location, 'right')
-            elif abs(distance['x']) >= abs(distance['y']) and (
-                    possible_directions['up'] or possible_directions['down']) and (
-                    opened_directions['up'] or opened_directions['down']):
-                if distance['y'] < 0 and opened_directions['up']:
-                    robot_location = move_robot(robot_location, 'up')
-                elif opened_directions['down']:
-                    robot_location = move_robot(robot_location, 'down')
-            elif abs(distance['y']) > abs(distance['x']) and (
-                    possible_directions['up'] or possible_directions['down']) and (
-                    opened_directions['up'] or opened_directions['down']):
-                if distance['y'] < 0 and opened_directions['up']:
-                    robot_location = move_robot(robot_location, 'up')
-                elif distance['y'] > 0 and opened_directions['down']:
-                    robot_location = move_robot(robot_location, 'down')
-            elif abs(distance['y']) > abs(distance['x']) and (
-                    possible_directions['left'] or possible_directions['right']) and (
-                    opened_directions['left'] or opened_directions['right']):
-                if distance['y'] < 0 and opened_directions['left']:
-                    robot_location = move_robot(robot_location, 'left')
-                elif opened_directions['right']:
-                    robot_location = move_robot(robot_location, 'right')
+            if abs(distance['x']) >= abs(distance['y']):
+                if distance['x'] < 0:
+                    if possible_moves['left'] and opened_directions['left']:
+                        robot_location = move_robot(robot_location, 'left')
+                    elif distance['y'] <= 0 and possible_moves['up'] and opened_directions['up']:
+                        robot_location = move_robot(robot_location, 'up')
+                    elif distance['y'] >= 0 and possible_moves['down'] and opened_directions['down']:
+                        robot_location = move_robot(robot_location, 'down')
+                    elif possible_moves['up'] and opened_directions['up']:
+                        robot_location = move_robot(robot_location, 'up')
+                    elif possible_moves['down'] and opened_directions['down']:
+                        robot_location = move_robot(robot_location, 'down')
+                    elif possible_moves['right'] and opened_directions['right']:
+                        robot_location = move_robot(robot_location, 'right')
+                elif distance['x'] > 0:
+                    if possible_moves['right'] and opened_directions['right']:
+                        robot_location = move_robot(robot_location, 'right')
+                    elif distance['y'] <= 0 and possible_moves['up'] and opened_directions['up']:
+                        robot_location = move_robot(robot_location, 'up')
+                    elif distance['y'] >= 0 and possible_moves['down'] and opened_directions['down']:
+                        robot_location = move_robot(robot_location, 'down')
+                    elif possible_moves['left'] and opened_directions['left']:
+                        robot_location = move_robot(robot_location, 'left')
             else:
-                robot_location = move_robot(robot_location, 'right')
+                if distance['y'] < 0:
+                    if possible_moves['up'] and opened_directions['up']:
+                        robot_location = move_robot(robot_location, 'up')
+                    elif distance['x'] <= 0 and possible_moves['left'] and opened_directions['left']:
+                        robot_location = move_robot(robot_location, 'left')
+                    elif distance['x'] >= 0 and possible_moves['right'] and opened_directions['right']:
+                        robot_location = move_robot(robot_location, 'right')
+                    elif possible_moves['left'] and opened_directions['left']:
+                        robot_location = move_robot(robot_location, 'left')
+                    elif possible_moves['right'] and opened_directions['right']:
+                        robot_location = move_robot(robot_location, 'right')
+                    elif possible_moves['down'] and opened_directions['down']:
+                        robot_location = move_robot(robot_location, 'down')
+                elif distance['y'] > 0:
+                    if possible_moves['down'] and opened_directions['down']:
+                        robot_location = move_robot(robot_location, 'down')
+                    elif distance['x'] <= 0 and possible_moves['left'] and opened_directions['left']:
+                        robot_location = move_robot(robot_location, 'left')
+                    elif distance['x'] >= 0 and possible_moves['right'] and opened_directions['right']:
+                        robot_location = move_robot(robot_location, 'right')
+                    elif possible_moves['up'] and opened_directions['up']:
+                        robot_location = move_robot(robot_location, 'up')
+        sleep(1)
 
     canvas_top.delete(x_text)
     canvas_top.delete(y_text)
