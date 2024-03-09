@@ -130,12 +130,12 @@ if __name__ == '__main__':
                         robot_location = move_robot(robot_location, 'up')
                     elif distance['y'] >= 0 and possible_moves['down'] and opened_directions['down']:
                         robot_location = move_robot(robot_location, 'down')
+                    elif possible_moves['right'] and opened_directions['right']:
+                        robot_location = move_robot(robot_location, 'right')
                     elif possible_moves['up'] and opened_directions['up']:
                         robot_location = move_robot(robot_location, 'up')
                     elif possible_moves['down'] and opened_directions['down']:
                         robot_location = move_robot(robot_location, 'down')
-                    elif possible_moves['right'] and opened_directions['right']:
-                        robot_location = move_robot(robot_location, 'right')
                 elif distance['x'] > 0:
                     if possible_moves['right'] and opened_directions['right']:
                         robot_location = move_robot(robot_location, 'right')
@@ -153,12 +153,12 @@ if __name__ == '__main__':
                         robot_location = move_robot(robot_location, 'left')
                     elif distance['x'] >= 0 and possible_moves['right'] and opened_directions['right']:
                         robot_location = move_robot(robot_location, 'right')
+                    elif possible_moves['down'] and opened_directions['down']:
+                        robot_location = move_robot(robot_location, 'down')
                     elif possible_moves['left'] and opened_directions['left']:
                         robot_location = move_robot(robot_location, 'left')
                     elif possible_moves['right'] and opened_directions['right']:
                         robot_location = move_robot(robot_location, 'right')
-                    elif possible_moves['down'] and opened_directions['down']:
-                        robot_location = move_robot(robot_location, 'down')
                 elif distance['y'] > 0:
                     if possible_moves['down'] and opened_directions['down']:
                         robot_location = move_robot(robot_location, 'down')
