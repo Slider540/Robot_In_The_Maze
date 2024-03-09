@@ -78,11 +78,13 @@ if __name__ == '__main__':
     # initiate the canvas
     tk = Tk()
     tk.title('Robot in the maze')
+    tk.resizable(False, False)
+    tk.wm_attributes("-topmost", 1)
     width = (tk.winfo_screenwidth() - 600) // 2
     height = (tk.winfo_screenheight() - 700) // 2
-    tk.geometry(f'600x660+{width}+{height}')
-    canvas_top = Canvas(tk, width=600, height=100, bg='#D1C1DE')
-    canvas_bottom = Canvas(tk, width=600, height=600, bg='#C1DED9')
+    tk.geometry(f'600x700+{width}+{height}')
+    canvas_top = Canvas(tk, width=600, height=100, bg='#D1C1DE', bd=0, highlightthickness=0)
+    canvas_bottom = Canvas(tk, width=600, height=600, bg='#C1DED9', bd=0, highlightthickness=0)
     canvas_top.pack()
     canvas_bottom.pack()
     x_text = canvas_top.create_text(120, 20, text='', font=('Arial', -18))
